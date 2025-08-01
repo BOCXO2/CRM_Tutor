@@ -1,0 +1,27 @@
+{% extends "core/base.html" %}
+{% block content %}
+<h2>{{ student.name }}</h2>
+<p><strong>Школа:</strong> {{ student.school }} ({{ student.grade }})</p>
+<p><strong>Цель:</strong> {{ student.goal }}</p>
+<a href="{% url 'student_edit' student.pk %}" class="btn btn-primary">✏️ Редактировать</a>
+<a href="{% url 'lesson_add' student.pk %}" class="btn btn-secondary">📘 Добавить занятие</a>
+
+<hr>
+<h4>Занятия</h4>
+<ul class="list-group">
+    {% for lesson in lessons %}
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+            <span>{{ lesson.date }} — {{ lesson.topic }}</span>
+            <div>
+                <span>{% if lesson.price > 0 %}💰{% else %}❌{% endif %}</span>
+                <form action="{% url 'delete_lesson' lesson.id %}" method="post" style="display:inline;">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Вы уверены, что хотите удалить это занятие?')">🗑️</button>
+                </form>
+            </div>
+        </li>
+    {% empty %}
+        <li class="list-group-item">Пока нет занятий.</li>
+    {% endfor %}
+</ul>
+{% endblock %}

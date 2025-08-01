@@ -1,0 +1,13 @@
+{% extends "core/base.html" %}
+{% block content %}
+    <a href="{% url 'student_add' %}" class="btn btn-success mb-3">➕ Добавить ученика</a>
+    <a href="{% url 'finance_summary' %}" class="btn btn-warning mb-3">📊 Финансы</a>
+    <ul class="list-group">
+        {% for student in students %}
+            <li class="list-group-item">
+                <a href="{% url 'student_detail' student.pk %}">{{ student.name }}</a>
+            </li>
+        {% endfor %}
+    </ul>
+{% endblock %}
+<a href="{% url 'finance_summary' %}" class="btn btn-warning mb-3">📊 Финансы</a>

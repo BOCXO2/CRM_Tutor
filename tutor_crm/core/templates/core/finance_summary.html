@@ -1,0 +1,27 @@
+{% extends "core/base.html" %}
+{% block content %}
+<h2>💰 Финансовая статистика</h2>
+
+<p><strong>Общая сумма заработка:</strong> {{ total_sum }} BYN</p>
+
+<table class="table table-bordered mt-4">
+    <thead>
+        <tr>
+            <th>Месяц</th>
+            <th>Сумма (BYN)</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for item in monthly_data %}
+            <tr>
+                <td>{{ item.month_str }}</td>
+                <td>{{ item.total }}</td>
+            </tr>
+        {% empty %}
+            <tr><td colspan="2">Нет данных</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<a href="{% url 'student_list' %}" class="btn btn-secondary">Назад</a>
+{% endblock %}

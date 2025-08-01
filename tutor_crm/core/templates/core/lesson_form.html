@@ -1,0 +1,9 @@
+{% extends "core/base.html" %}
+{% block content %}
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-success">Сохранить</button>
+        <a href="{% url 'student_list' %}" class="btn btn-secondary">Назад</a>
+    </form>
+{% endblock %}
