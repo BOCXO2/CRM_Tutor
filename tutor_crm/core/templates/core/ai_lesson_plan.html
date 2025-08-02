@@ -1,0 +1,140 @@
+{% extends "core/base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-10 offset-md-1">
+            {% if error %}
+                <div class="alert alert-danger">
+                    <h4>❌ Ошибка AI</h4>
+                    <p>{{ error }}</p>
+                    <a href="{% url 'ai_plan_lesson' student.pk %}" class="btn btn-primary">Попробовать снова</a>
+                </div>
+            {% else %}
+                <div class="card">
+                    <div class="card-header bg-primary text-white">
+                        <h3>🤖 План урока от AI</h3>
+                        <p class="mb-0">Ученик: <strong>{{ student.name }}</strong> | Тема: <strong>{{ topic|default:"Автоматически выбрана" }}</strong></p>
+                    </div>
+                    <div class="card-body">
+                        <h4 class="text-primary">{{ plan.title }}</h4>
+                        
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <h5>🎯 Цели урока:</h5>
+                                <ul>
+                                    {% for objective in plan.objectives %}
+                                        <li>{{ objective }}</li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                            <div class="col-md-6">
+                                <h5>📚 Материалы:</h5>
+                                <ul>
+                                    {% for material in plan.materials %}
+                                        <li>{{ material }}</li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <h5>⏰ Структура урока:</h5>
+                        <div class="timeline">
+                            {% for step in plan.structure %}
+                                <div class="timeline-item mb-3">
+                                    <div class="card">
+                                        <div class="card-header bg-light">
+                                            <strong>{{ step.time }}</strong>
+                                        </div>
+                                        <div class="card-body">
+                                            <h6>{{ step.activity }}</h6>
+                                            <p class="mb-0">{{ step.description }}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                        
+                        <div class="row mt-4">
+                            <div class="col-md-6">
+                                <h5>📝 Домашнее задание:</h5>
+                                <div class="alert alert-info">
+                                    {{ plan.homework }}
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <h5>💡 Заметки:</h5>
+                                <div class="alert alert-warning">
+                                    {{ plan.notes|default:"Дополнительные заметки отсутствуют" }}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="d-flex justify-content-between mt-4">
+                            <div>
+                                <a href="{% url 'ai_plan_lesson' student.pk %}" class="btn btn-secondary">
+                                    🔄 Создать новый план
+                                </a>
+                                <a href="{% url 'student_detail' student.pk %}" class="btn btn-outline-secondary">
+                                    ← Назад к ученику
+                                </a>
+                            </div>
+                            <div>
+                                <button class="btn btn-success" onclick="saveLessonPlan()">
+                                    💾 Сохранить как занятие
+                                </button>
+                                <button class="btn btn-primary" onclick="printPlan()">
+                                    🖨️ Распечатать план
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<script>
+function saveLessonPlan() {
+    const planData = {
+        title: "{{ plan.title }}",
+        notes: "{{ plan.notes|default:'' }}",
+        price: 0,
+        date: new Date().toISOString().split('T')[0]
+    };
+    
+    fetch("{% url 'ai_save_lesson_plan' student.pk %}", {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(planData)
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert('✅ План урока сохранен как занятие!');
+            window.location.href = "{% url 'student_detail' student.pk %}";
+        } else {
+            alert('❌ Ошибка при сохранении: ' + data.error);
+        }
+    });
+}
+
+function printPlan() {
+    window.print();
+}
+</script>
+
+<style>
+@media print {
+    .btn, .d-flex {
+        display: none !important;
+    }
+    .card {
+        border: none !important;
+    }
+}
+</style>
+{% endblock %} 

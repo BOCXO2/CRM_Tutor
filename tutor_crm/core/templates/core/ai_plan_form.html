@@ -1,0 +1,56 @@
+{% extends "core/base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <div class="card">
+                <div class="card-header">
+                    <h3>🤖 AI Планирование урока</h3>
+                    <p class="mb-0">Ученик: <strong>{{ student.name }}</strong></p>
+                </div>
+                <div class="card-body">
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="topic" class="form-label">Тема урока:</label>
+                            <input type="text" class="form-control" id="topic" name="topic" 
+                                   placeholder="Например: Квадратные уравнения" required>
+                            <div class="form-text">Оставьте пустым, чтобы AI предложил тему на основе прогресса</div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="duration" class="form-label">Длительность урока (минуты):</label>
+                            <select class="form-select" id="duration" name="duration">
+                                <option value="45">45 минут</option>
+                                <option value="60" selected>60 минут</option>
+                                <option value="90">90 минут</option>
+                                <option value="120">120 минут</option>
+                            </select>
+                        </div>
+                        
+                        <div class="alert alert-info">
+                            <strong>💡 AI учтет:</strong>
+                            <ul class="mb-0">
+                                <li>Цель занятий ученика: {{ student.goal|default:"не указана" }}</li>
+                                <li>Класс: {{ student.grade|default:"не указан" }}</li>
+                                <li>Последние занятия и прогресс</li>
+                                <li>Сложность и интересы ученика</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="d-flex justify-content-between">
+                            <a href="{% url 'student_detail' student.pk %}" class="btn btn-secondary">
+                                ← Назад к ученику
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                🚀 Создать план урока
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

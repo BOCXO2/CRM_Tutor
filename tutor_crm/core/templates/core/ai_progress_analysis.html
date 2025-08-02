@@ -1,0 +1,134 @@
+{% extends "core/base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-10 offset-md-1">
+            {% if error %}
+                <div class="alert alert-danger">
+                    <h4>❌ Ошибка AI</h4>
+                    <p>{{ error }}</p>
+                    <a href="{% url 'ai_analyze_progress' student.pk %}" class="btn btn-primary">Попробовать снова</a>
+                </div>
+            {% else %}
+                <div class="card">
+                    <div class="card-header bg-info text-white">
+                        <h3>🤖 AI Анализ прогресса</h3>
+                        <p class="mb-0">Ученик: <strong>{{ student.name }}</strong></p>
+                    </div>
+                    <div class="card-body">
+                        <div class="row mb-4">
+                            <div class="col-md-12">
+                                <h4 class="text-info">📊 Общая оценка прогресса</h4>
+                                <div class="alert alert-info">
+                                    {{ analysis.progress_summary }}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <h5>✅ Сильные стороны:</h5>
+                                <ul class="list-group">
+                                    {% for strength in analysis.strengths %}
+                                        <li class="list-group-item list-group-item-success">
+                                            {{ strength }}
+                                        </li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                            <div class="col-md-6">
+                                <h5>⚠️ Области для улучшения:</h5>
+                                <ul class="list-group">
+                                    {% for weakness in analysis.weaknesses %}
+                                        <li class="list-group-item list-group-item-warning">
+                                            {{ weakness }}
+                                        </li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <h5>💡 Рекомендации:</h5>
+                                <ul class="list-group">
+                                    {% for recommendation in analysis.recommendations %}
+                                        <li class="list-group-item list-group-item-primary">
+                                            {{ recommendation }}
+                                        </li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                            <div class="col-md-6">
+                                <h5>📚 Следующие темы для изучения:</h5>
+                                <ul class="list-group">
+                                    {% for topic in analysis.next_topics %}
+                                        <li class="list-group-item list-group-item-info">
+                                            {{ topic }}
+                                        </li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-12">
+                                <h5>🎯 Советы по мотивации:</h5>
+                                <div class="alert alert-success">
+                                    <ul class="mb-0">
+                                        {% for tip in analysis.motivation_tips %}
+                                            <li>{{ tip }}</li>
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="d-flex justify-content-between mt-4">
+                            <div>
+                                <a href="{% url 'ai_analyze_progress' student.pk %}" class="btn btn-secondary">
+                                    🔄 Обновить анализ
+                                </a>
+                                <a href="{% url 'student_detail' student.pk %}" class="btn btn-outline-secondary">
+                                    ← Назад к ученику
+                                </a>
+                            </div>
+                            <div>
+                                <button class="btn btn-primary" onclick="printAnalysis()">
+                                    🖨️ Распечатать отчет
+                                </button>
+                                <button class="btn btn-success" onclick="exportAnalysis()">
+                                    📄 Экспорт в PDF
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<script>
+function printAnalysis() {
+    window.print();
+}
+
+function exportAnalysis() {
+    // Здесь можно добавить функциональность экспорта в PDF
+    alert('Функция экспорта в разработке');
+}
+</script>
+
+<style>
+@media print {
+    .btn, .d-flex {
+        display: none !important;
+    }
+    .card {
+        border: none !important;
+    }
+}
+</style>
+{% endblock %} 

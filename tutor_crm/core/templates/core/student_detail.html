@@ -1,10 +1,38 @@
 {% extends "core/base.html" %}
 {% block content %}
-<h2>{{ student.name }}</h2>
-<p><strong>Школа:</strong> {{ student.school }} ({{ student.grade }})</p>
-<p><strong>Цель:</strong> {{ student.goal }}</p>
-<a href="{% url 'student_edit' student.pk %}" class="btn btn-primary">✏️ Редактировать</a>
-<a href="{% url 'lesson_add' student.pk %}" class="btn btn-secondary">📘 Добавить занятие</a>
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-8">
+            <h2>{{ student.name }}</h2>
+            <p><strong>Школа:</strong> {{ student.school }} ({{ student.grade }})</p>
+            <p><strong>Цель:</strong> {{ student.goal }}</p>
+            
+            <div class="btn-group mb-3" role="group">
+                <a href="{% url 'student_edit' student.pk %}" class="btn btn-primary">✏️ Редактировать</a>
+                <a href="{% url 'lesson_create' student.pk %}" class="btn btn-secondary">📘 Добавить занятие</a>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card bg-light">
+                <div class="card-header">
+                    <h5>🤖 AI Помощник</h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-2">
+                        <a href="{% url 'ai_plan_lesson' student.pk %}" class="btn btn-outline-primary btn-sm">
+                            📋 Планировать урок
+                        </a>
+                        <a href="{% url 'ai_generate_homework' student.pk %}" class="btn btn-outline-success btn-sm">
+                            📝 Создать ДЗ
+                        </a>
+                        <a href="{% url 'ai_analyze_progress' student.pk %}" class="btn btn-outline-info btn-sm">
+                            📊 Анализ прогресса
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
 <hr>
 <h4>Занятия</h4>

@@ -1,0 +1,119 @@
+{% extends "core/base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-10 offset-md-1">
+            {% if error %}
+                <div class="alert alert-danger">
+                    <h4>❌ Ошибка AI</h4>
+                    <p>{{ error }}</p>
+                    <a href="{% url 'ai_generate_homework' student.pk %}" class="btn btn-primary">Попробовать снова</a>
+                </div>
+            {% else %}
+                <div class="card">
+                    <div class="card-header bg-success text-white">
+                        <h3>🤖 Домашнее задание от AI</h3>
+                        <p class="mb-0">Ученик: <strong>{{ student.name }}</strong> | Тема: <strong>{{ lesson_topic }}</strong></p>
+                    </div>
+                    <div class="card-body">
+                        <div class="row mb-4">
+                            <div class="col-md-8">
+                                <h4 class="text-success">{{ homework.title }}</h4>
+                                <p class="text-muted">{{ homework.description }}</p>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="card bg-light">
+                                    <div class="card-body text-center">
+                                        <h6>⏱️ Время выполнения</h6>
+                                        <p class="mb-0">{{ homework.estimated_time }}</p>
+                                        <h6 class="mt-3">📊 Сложность</h6>
+                                        <p class="mb-0">{{ homework.difficulty }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <h5>📝 Задания:</h5>
+                        {% for task in homework.tasks %}
+                            <div class="card mb-3">
+                                <div class="card-header">
+                                    <strong>Задание {{ task.number }}</strong>
+                                </div>
+                                <div class="card-body">
+                                    <p class="mb-2">{{ task.task }}</p>
+                                    {% if task.hint %}
+                                        <div class="alert alert-info mb-0">
+                                            <strong>💡 Подсказка:</strong> {{ task.hint }}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        {% endfor %}
+                        
+                        <div class="d-flex justify-content-between mt-4">
+                            <div>
+                                <a href="{% url 'ai_generate_homework' student.pk %}" class="btn btn-secondary">
+                                    🔄 Создать новое задание
+                                </a>
+                                <a href="{% url 'student_detail' student.pk %}" class="btn btn-outline-secondary">
+                                    ← Назад к ученику
+                                </a>
+                            </div>
+                            <div>
+                                <button class="btn btn-success" onclick="saveHomework()">
+                                    💾 Сохранить как ДЗ
+                                </button>
+                                <button class="btn btn-primary" onclick="printHomework()">
+                                    🖨️ Распечатать задание
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<script>
+function saveHomework() {
+    const homeworkData = {
+        description: "{{ homework.description }}",
+        lesson_id: null // Будет установлено при создании занятия
+    };
+    
+    fetch("{% url 'ai_save_homework' student.pk %}", {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(homeworkData)
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert('✅ Домашнее задание сохранено!');
+            window.location.href = "{% url 'student_detail' student.pk %}";
+        } else {
+            alert('❌ Ошибка при сохранении: ' + data.error);
+        }
+    });
+}
+
+function printHomework() {
+    window.print();
+}
+</script>
+
+<style>
+@media print {
+    .btn, .d-flex {
+        display: none !important;
+    }
+    .card {
+        border: none !important;
+    }
+}
+</style>
+{% endblock %} 
